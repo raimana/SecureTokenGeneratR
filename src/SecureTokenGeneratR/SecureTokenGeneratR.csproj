@@ -4,17 +4,17 @@
         <LangVersion>8</LangVersion>
         <Nullable>disable</Nullable>
         <TargetFrameworks>net461;netstandard2.0;netstandard2.1</TargetFrameworks>
-        <Title>PasswordGenerator</Title>
+        <Title>SecureTokenGeneratR</Title>
         <Authors>Raimana Lowgreen</Authors>
-        <Description>.NET Password Generator</Description>
+        <Description>.NET Secure Token Generator</Description>
         <Copyright>Copyright Raimana Lowgreen</Copyright>
-        <PackageTags>password; generator; password generator</PackageTags>
+        <PackageTags>secure; secure token; token; password; generator; password generator</PackageTags>
         <SignAssembly>false</SignAssembly>
-        <AssemblyOriginatorKeyFile>PasswordGenerator.pfx</AssemblyOriginatorKeyFile>
         <DelaySign>false</DelaySign>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageProjectUrl>https://github.com/raimana/PasswordGenerator</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/raimana/PasswordGenerator</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/raimana/SecureTokenGeneratR</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/raimana/SecureTokenGeneratR</RepositoryUrl>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     </PropertyGroup>
 
 </Project>

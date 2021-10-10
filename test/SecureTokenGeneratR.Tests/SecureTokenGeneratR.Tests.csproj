@@ -6,6 +6,12 @@
         <IsPackable>false</IsPackable>
 
         <OutputType>Library</OutputType>
+
+        <AssemblyName>SecureTokenGeneratR.Tests</AssemblyName>
+
+        <PackageId>SecureTokenGeneratR.Tests</PackageId>
+
+        <Authors>Raimana Lowgreen</Authors>
     </PropertyGroup>
 
     <ItemGroup>
@@ -23,7 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\PasswordGenerator\PasswordGenerator.csproj" />
+      <ProjectReference Include="..\..\src\SecureTokenGeneratR\SecureTokenGeneratR.csproj" />
     </ItemGroup>
 
 </Project>

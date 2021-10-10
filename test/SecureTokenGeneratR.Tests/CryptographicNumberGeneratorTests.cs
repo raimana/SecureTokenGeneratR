@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using FluentAssertions;
 using Xunit;
-using static PasswordGenerator.CryptographicNumberGenerator;
+using static SecureTokenGeneratR.CryptographicNumberGenerator;
 
-namespace PasswordGenerator.Tests
+namespace SecureTokenGeneratR.Tests
 {
     public class CryptographicNumberGeneratorTests
     {

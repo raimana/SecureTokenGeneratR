@@ -1,9 +1,9 @@
 ﻿using System;
 using FluentAssertions;
-using PasswordGenerator.CharacterSets;
+using SecureTokenGeneratR.CharacterSets;
 using Xunit;
 
-namespace PasswordGenerator.Tests
+namespace SecureTokenGeneratR.Tests
 {
     public class CharacterSetTests
     {
@@ -13,7 +13,7 @@ namespace PasswordGenerator.Tests
             const int startUnicodeRange = 97; // lower case a
             const int endUnicodeRange = 122; // lower case z
             
-            var characterSet = new UnicodeRangeCharacterSet(startUnicodeRange, endUnicodeRange);
+            var characterSet = new CharsetAsUnicodeRange(startUnicodeRange, endUnicodeRange);
 
             for (var i = 0; i < 200000; i++)
             {
@@ -28,7 +28,7 @@ namespace PasswordGenerator.Tests
         {
             var charArray = @"!""#$%&'()*+,-./:;<=>?@[\]^_`{|}~".ToCharArray();
             
-            var characterSet = new CharsCollectionCharacterSet(charArray);
+            var characterSet = new CharsetAsSequence(charArray);
 
             for (var i = 0; i < 200000; i++)
             {
@@ -44,7 +44,7 @@ namespace PasswordGenerator.Tests
             const int startUnicodeRange = 97;
             const int endUnicodeRange = 97;
 
-            Action unicodeCharacterSetInvocation = () =>  new UnicodeRangeCharacterSet(startUnicodeRange, endUnicodeRange);
+            Action unicodeCharacterSetInvocation = () =>  new CharsetAsUnicodeRange(startUnicodeRange, endUnicodeRange);
 
             unicodeCharacterSetInvocation.Should().Throw<ArgumentOutOfRangeException>();
         }
@@ -55,7 +55,7 @@ namespace PasswordGenerator.Tests
             const int startUnicodeRange = 100;
             const int endUnicodeRange = 97;
 
-            Action unicodeCharacterSetInvocation = () =>  new UnicodeRangeCharacterSet(startUnicodeRange, endUnicodeRange);
+            Action unicodeCharacterSetInvocation = () =>  new CharsetAsUnicodeRange(startUnicodeRange, endUnicodeRange);
             
             unicodeCharacterSetInvocation.Should().Throw<ArgumentOutOfRangeException>();
         }

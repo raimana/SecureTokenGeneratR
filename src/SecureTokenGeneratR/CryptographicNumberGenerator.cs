@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 
-namespace PasswordGenerator
+namespace SecureTokenGeneratR
 {
     public static class CryptographicNumberGenerator
     {

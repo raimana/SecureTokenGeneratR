@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\PasswordGenerator\PasswordGenerator.csproj" />
+      <ProjectReference Include="..\..\src\SecureTokenGeneratR\SecureTokenGeneratR.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,17 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using static PasswordGenerator.CryptographicNumberGenerator;
+using static SecureTokenGeneratR.CryptographicNumberGenerator;
 
-namespace PasswordGenerator.CharacterSets
+namespace SecureTokenGeneratR.CharacterSets
 {
-    public class CharsCollectionCharacterSet : ICharacterSet
+    public class CharsetAsSequence : ICharacterSet
     {
         private readonly char[] _charactersAsCharArray;
         public int Count { get; }
 
-        public CharsCollectionCharacterSet(IEnumerable<char> charactersCollection)
+        public CharsetAsSequence(IEnumerable<char> charactersCollection)
         {
             _charactersAsCharArray = charactersCollection.Distinct().ToArray();
             Count = _charactersAsCharArray.Length;

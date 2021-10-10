@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PasswordGenerator.Extensions
+namespace SecureTokenGeneratR.Extensions
 {
     public static class EnumerableExtensions
     {

@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
-using static PasswordGenerator.CryptographicNumberGenerator;
+using static SecureTokenGeneratR.CryptographicNumberGenerator;
 
-namespace PasswordGenerator.CharacterSets
+namespace SecureTokenGeneratR.CharacterSets
 {
-    public class UnicodeRangeCharacterSet : ICharacterSet
+    public class CharsetAsUnicodeRange : ICharacterSet
     {
         private readonly int _startRange;
         public int Count { get; }
 
-        public UnicodeRangeCharacterSet(int startRange, int endRange)
+        public CharsetAsUnicodeRange(int startRange, int endRange)
         {
             if (startRange >= endRange) 
                 throw new ArgumentOutOfRangeException(nameof(startRange), startRange, "Start is equal or greater than end of range");

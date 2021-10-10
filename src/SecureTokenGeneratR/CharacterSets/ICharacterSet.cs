@@ -1,4 +1,4 @@
-﻿namespace PasswordGenerator.CharacterSets
+﻿namespace SecureTokenGeneratR.CharacterSets
 {
     public interface ICharacterSet
     {

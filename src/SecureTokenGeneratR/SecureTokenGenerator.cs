@@ -9,6 +9,7 @@ namespace SecureTokenGeneratR
 {
     public class SecureTokenGenerator : ISecureTokenGenerator
     {
+        private uint _allowedCharsetsSize; 
         private uint _tokenLength;
         private uint _maxRepeatingCharCount;
         private IReadOnlyList<ICharacterSet> _allowedCharsets;
@@ -25,6 +26,9 @@ namespace SecureTokenGeneratR
             }
         }
 
+        public double GetTokenEntropy => Entropy.CalculateTokenEntropy(_allowedCharsetsSize, _tokenLength);
+        public double GetCharacterEntropy(string token) => Entropy.CalculatePerCharacterEntropy(token);
+
         public SecureTokenGenerator(uint tokenLength = 16, uint maxRepeatingCharCount = 0,
             IReadOnlyList<ICharacterSet> allowedCharSet = default) =>
             SetOptions(tokenLength, maxRepeatingCharCount, allowedCharSet ?? DefaultAllowedCharSets);
@@ -35,8 +39,8 @@ namespace SecureTokenGeneratR
         {
             _allowedCharsets = allowedCharSet ?? DefaultAllowedCharSets;
             
-            var allowedCharsetsSize = _allowedCharsets.Aggregate(0, (total, next) => total + next.Count);
-            if (maxRepeatingCharCount > 0 && tokenLength >= allowedCharsetsSize * maxRepeatingCharCount) 
+            _allowedCharsetsSize = (uint) _allowedCharsets.Aggregate(0, (total, next) => total + next.Count);
+            if (maxRepeatingCharCount > 0 && tokenLength > _allowedCharsetsSize * maxRepeatingCharCount) 
                 throw new ArgumentException($"Not enough unique characters to satisfy the maximum repeating character constraint");
 
             _tokenLength = tokenLength;

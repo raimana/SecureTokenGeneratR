@@ -41,7 +41,9 @@ string secureToken = secureTokenGenerator.Generate();
 ```
 The token generated using the default options will contain 16 characters, with **at least** one character from each character set (i.e. lower latin, upper latin, number & special character) without limiting the number of occurrence of any character.
 
-**Note:** while improbable, a random sequence such as `1111111111111111` is not impossible.
+**Notes:**
+1. while improbable, a random sequence such as `1111111111111111` is not impossible.
+2. the default options will generate tokens with 104.87 bits of entropy.
 
 ### With User Defined Options
 ```c#
@@ -57,3 +59,37 @@ var secureTokenGenerator = new SecureTokenGenerator(tokenLength, maxRepeatingCha
 string secureToken = secureTokenGenerator.Generate();
 ```
 The token generated in the example above will contain 8 characters, **at least** one character from each characters set and **at most** two occurrences of any character from all characters sets.
+
+### With User Defined Options - All Chars Except Controls
+Perhaps a bit extreme...
+```c#
+var allExceptControlChars = Enumerable.Range(0, char.MaxValue+1)
+    .Select(i => (char) i)
+    .Where(chr => !char.IsControl(chr));
+
+var charset = new CharsetAsSequence(allExceptControlChars);
+var allowedCharSet = new List<ICharacterSet> { charset };
+
+var secureTokenGenerator = new SecureTokenGenerator(128, 0, allowedCharSet);
+string password = secureTokenGenerator.Generate(); 
+// ꔫ檳蛪⇾᛼⩫뷾⛨㔟瘲⇐綇ꠎ굩胬㽇줉㫊ⅈ螵蕾뚏涙㼗쎕肁랎汅灸澋큺葾碑丆ኤ䘼㣬﹭క䬈就뒊ꄳ辬☴≣욺션煢我㛣⦥Ფ鈺녝㥃㕅鄵䳄0᪰䴖ꁹ巕唍◠梩ꦇ植?茹阁봻࡚㕦ꤑ麛濫?뗿煦㾏崏஌ꛄ祖쑖㏆⫈?ç櫔￭근틷褾剳聶墔諄ﲺ蕩늘単䷐慓愌ዦ烡쬩ᬐ봸ཌᤶ
+```
+
+### Get Entropy Metrics
+[See Entropy](https://en.wikipedia.org/wiki/Entropy_(information_theory))
+```c#
+var secureTokenGenerator = new SecureTokenGenerator();
+
+// Based on characters space and length
+double tokenEntropy = secureTokenGenerator.GetTokenEntropy;
+Console.WriteLine(tokenEntropy); // 104.8734216268422
+
+//--
+
+string secureToken = secureTokenGenerator.Generate();
+
+// Number of bits needed to encode each characters, based on repeated characters.
+double characterEntropy = secureTokenGenerator.GetCharacterEntropy(token);
+Console.WriteLine(characterEntropy); // 4 
+```
+**Note:** Using entropy alone as a strength factor is not a good approach.

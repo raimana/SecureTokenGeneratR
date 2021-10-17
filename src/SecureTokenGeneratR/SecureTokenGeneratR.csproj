@@ -15,6 +15,8 @@
         <PackageProjectUrl>https://github.com/raimana/SecureTokenGeneratR</PackageProjectUrl>
         <RepositoryUrl>https://github.com/raimana/SecureTokenGeneratR</RepositoryUrl>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <PackageVersion>1.0.1</PackageVersion>
+        <PackageReleaseNotes>* Added entropy calculator</PackageReleaseNotes>
     </PropertyGroup>
 
 </Project>

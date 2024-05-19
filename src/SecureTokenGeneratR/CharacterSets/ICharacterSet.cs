@@ -1,8 +1,7 @@
-﻿namespace SecureTokenGeneratR.CharacterSets
+﻿namespace SecureTokenGeneratR.CharacterSets;
+
+public interface ICharacterSet
 {
-    public interface ICharacterSet
-    {
-        public int Count { get;  }
-        char GetRandomChar();
-    }
+    public int Count { get; }
+    char GetRandomChar();
 }

@@ -15,8 +15,7 @@ namespace SecureTokenGeneratR.Tests
         private static bool HasUpperChar(string secureToken) => Regex.IsMatch(secureToken, @"[A-Z]+");
         private static bool HasLowerChar(string secureToken) => Regex.IsMatch(secureToken, @"[a-z]+");
 
-        private static bool HasSpecialChar(string secureToken) =>
-            Regex.IsMatch(secureToken, @"[!""#$%&'()*+,-./\\:;<=>?@[\]^_`{|}~]+");
+        private static bool HasSpecialChar(string secureToken) => Regex.IsMatch(secureToken, @"[!""#$%&'()*+,-./\\:;<=>?@[\]^_`{|}~]+");
 
         private static bool HasMinimum16Chars(string secureToken) => Regex.IsMatch(secureToken, @".{16,}");
 
@@ -49,8 +48,7 @@ namespace SecureTokenGeneratR.Tests
             var upperLatinCharset = new CharsetAsUnicodeRange(65, 90);
             var numbersCharset = new CharsetAsUnicodeRange(48, 57);
             var specialCharset = new CharsetAsSequence(@"!""#$%&'()*+,-./:;<=>?@[\]^_`{|}~");
-            var allowedCharSet = new List<ICharacterSet>
-                { lowerLatinCharset, upperLatinCharset, numbersCharset, specialCharset };
+            var allowedCharSet = new List<ICharacterSet> { lowerLatinCharset, upperLatinCharset, numbersCharset, specialCharset };
 
             const int maxRepeatingCharCount = 2;
             const int tokenLength = 24;

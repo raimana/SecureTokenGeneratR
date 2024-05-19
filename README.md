@@ -6,7 +6,7 @@ Generate random passwords or token; use the default generation rules or set your
 Using [System.Security.Cryptography.RandomNumberGenerator](https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.randomnumbergenerator) to generate cryptographically strong random values.
 
 * Dependencies: none
-* Compatibility: NET Framework 4.6.1+, Net Standard 2.0+
+* Compatibility: NET Framework 4.6.1+, Net Standard 1.0+, .NET 5.0+
 
 ### Default Characters Sets
 * All numbers

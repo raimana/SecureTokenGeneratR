@@ -37,6 +37,9 @@ jobs:
       - name: Build library for all target frameworks
         run: dotnet build src/SecureTokenGeneratR/SecureTokenGeneratR.csproj --configuration Release
 
+      - name: Build benchmark project
+        run: dotnet build test/SecureTokenGeneratR.Benchmarks/SecureTokenGeneratR.Benchmarks.csproj --configuration Release
+
       - name: Test on .NET 8
         run: dotnet test test/SecureTokenGeneratR.Tests/SecureTokenGeneratR.Tests.csproj --configuration Release --framework net8.0
 

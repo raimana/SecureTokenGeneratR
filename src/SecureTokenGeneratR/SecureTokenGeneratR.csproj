@@ -3,7 +3,7 @@
     <PropertyGroup>
         <LangVersion>12</LangVersion>
         <Nullable>disable</Nullable>
-        <TargetFrameworks>net461;netstandard2.0;netstandard2.1;net6.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>net461;netstandard2.0;netstandard2.1;net6.0;net8.0;net10.0</TargetFrameworks>
         <Title>SecureTokenGeneratR</Title>
         <Authors>Raimana Lowgreen</Authors>
         <Description>.NET Secure Token Generator</Description>
@@ -15,8 +15,13 @@
         <PackageProjectUrl>https://github.com/raimana/SecureTokenGeneratR</PackageProjectUrl>
         <RepositoryUrl>https://github.com/raimana/SecureTokenGeneratR</RepositoryUrl>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-        <PackageVersion>1.0.1</PackageVersion>
-        <PackageReleaseNotes>* Added entropy calculator</PackageReleaseNotes>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageVersion>1.1.0</PackageVersion>
+        <PackageReleaseNotes>* Added a fluent configuration API and .NET 10 support</PackageReleaseNotes>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
 
 </Project>

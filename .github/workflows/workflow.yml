@@ -1,24 +1,54 @@
-name: Main Build
+name: Build, test, and package
 
-on: [push]
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
-
+  build-and-test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        dotnet-version: ['5.0.x', '6.0.x', '8.0.x']
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
-        uses: actions/setup-dotnet@v4.0.0
+      - uses: actions/checkout@v7
+
+      - name: Set up .NET 8 and 10 SDKs
+        uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: ${{ matrix.dotnet-version }}
-      - name: Install dependencies
-        run: dotnet restore
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
-      - name: Test
-        run: dotnet test --no-restore --verbosity normal
+          dotnet-version: |
+            8.0.x
+            10.0.x
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+
+      - name: Select and verify .NET 10 SDK
+        run: |
+          sdk_version="$(dotnet --list-sdks | awk '$1 ~ /^10\./ { version = $1 } END { print version }')"
+          test -n "$sdk_version"
+          printf '{"sdk":{"version":"%s"}}\n' "$sdk_version" > global.json
+          test "$(dotnet --version)" = "$sdk_version"
+
+      - name: Build library for all target frameworks
+        run: dotnet build src/SecureTokenGeneratR/SecureTokenGeneratR.csproj --configuration Release
+
+      - name: Test on .NET 8
+        run: dotnet test test/SecureTokenGeneratR.Tests/SecureTokenGeneratR.Tests.csproj --configuration Release --framework net8.0
+
+      - name: Test on .NET 10
+        run: dotnet test test/SecureTokenGeneratR.Tests/SecureTokenGeneratR.Tests.csproj --configuration Release --framework net10.0
+
+      - name: Pack NuGet package
+        run: dotnet pack src/SecureTokenGeneratR/SecureTokenGeneratR.csproj --configuration Release --no-build --no-restore --output artifacts/packages
+
+      - name: Upload NuGet package
+        uses: actions/upload-artifact@v7
+        with:
+          name: SecureTokenGeneratR-${{ github.sha }}
+          path: artifacts/packages/*.nupkg
+          if-no-files-found: error

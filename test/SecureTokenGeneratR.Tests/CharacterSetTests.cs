@@ -1,6 +1,6 @@
 ﻿using System;
-using FluentAssertions;
 using SecureTokenGeneratR.CharacterSets;
+using Shouldly;
 using Xunit;
 
 namespace SecureTokenGeneratR.Tests
@@ -20,7 +20,7 @@ namespace SecureTokenGeneratR.Tests
             {
                 var randomChar = characterSet.GetRandomChar();
 
-                char.IsLower(randomChar).Should().BeTrue();
+                char.IsLower(randomChar).ShouldBeTrue();
             }
         }
 
@@ -35,7 +35,7 @@ namespace SecureTokenGeneratR.Tests
             {
                 var randomChar = characterSet.GetRandomChar();
 
-                charArray.Should().Contain(randomChar);
+                charArray.ShouldContain(randomChar);
             }
         }
 
@@ -47,7 +47,7 @@ namespace SecureTokenGeneratR.Tests
 
             Action unicodeCharacterSetInvocation = () => new CharsetAsUnicodeRange(startUnicodeRange, endUnicodeRange);
 
-            unicodeCharacterSetInvocation.Should().Throw<ArgumentOutOfRangeException>();
+            Should.Throw<ArgumentOutOfRangeException>(unicodeCharacterSetInvocation);
         }
 
         [Fact]
@@ -58,7 +58,7 @@ namespace SecureTokenGeneratR.Tests
 
             Action unicodeCharacterSetInvocation = () => new CharsetAsUnicodeRange(startUnicodeRange, endUnicodeRange);
 
-            unicodeCharacterSetInvocation.Should().Throw<ArgumentOutOfRangeException>();
+            Should.Throw<ArgumentOutOfRangeException>(unicodeCharacterSetInvocation);
         }
     }
 }

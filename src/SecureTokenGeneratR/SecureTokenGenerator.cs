@@ -34,13 +34,51 @@ public class SecureTokenGenerator : ISecureTokenGenerator
     public double GetTokenEntropy => Entropy.CalculateTokenEntropy(_allowedCharsetsSize, _tokenLength);
     public double GetCharacterEntropy(string token) => Entropy.CalculatePerCharacterEntropy(token);
 
-    public SecureTokenGenerator(uint tokenLength = 16, uint maxRepeatingCharCount = 0, IReadOnlyList<ICharacterSet> allowedCharSet = default) =>
+    [Obsolete("Use SecureToken.Default or the SecureToken fluent methods instead.")]
+    public SecureTokenGenerator(uint tokenLength = 16, uint maxRepeatingCharCount = 0, IReadOnlyList<ICharacterSet> allowedCharSet = default)
+        : this(tokenLength, maxRepeatingCharCount, allowedCharSet, true)
+    {
+    }
+
+    private SecureTokenGenerator(uint tokenLength, uint maxRepeatingCharCount, IReadOnlyList<ICharacterSet> allowedCharSet, bool _)
+    {
         SetOptions(tokenLength, maxRepeatingCharCount, allowedCharSet ?? DefaultAllowedCharSets);
+    }
+
+    internal static SecureTokenGenerator Create(uint tokenLength = 16, uint maxRepeatingCharCount = 0, IReadOnlyList<ICharacterSet> allowedCharSet = default) =>
+        new(tokenLength, maxRepeatingCharCount, allowedCharSet, true);
+
+    public SecureTokenGenerator WithLength(uint tokenLength) =>
+        Create(tokenLength, _maxRepeatingCharCount, _allowedCharsets);
+
+    public SecureTokenGenerator WithMaxRepeatingCharCount(uint maxRepeatingCharCount) =>
+        Create(_tokenLength, maxRepeatingCharCount, _allowedCharsets);
+
+    public SecureTokenGenerator WithCharset(IEnumerable<char> characters) =>
+        AddCharset(new CharsetAsSequence(characters));
+
+    public SecureTokenGenerator WithCharset(int startRange, int endRange) =>
+        AddCharset(new CharsetAsUnicodeRange(startRange, endRange));
+
+    public SecureTokenGenerator WithCharsets(IEnumerable<char> characters) =>
+        Create(_tokenLength, _maxRepeatingCharCount, [new CharsetAsSequence(characters)]);
+
+    public SecureTokenGenerator WithCharsets(int startRange, int endRange) =>
+        Create(_tokenLength, _maxRepeatingCharCount, [new CharsetAsUnicodeRange(startRange, endRange)]);
+
+    public SecureTokenGenerator WithCharsets(IReadOnlyList<ICharacterSet> allowedCharsets) =>
+        Create(_tokenLength, _maxRepeatingCharCount, allowedCharsets);
+
+    private SecureTokenGenerator AddCharset(ICharacterSet charset)
+    {
+        ICharacterSet[] allowedCharsets = [.. _allowedCharsets, charset];
+        return Create(_tokenLength, _maxRepeatingCharCount, allowedCharsets);
+    }
 
 
     private void SetOptions(uint tokenLength, uint maxRepeatingCharCount, IReadOnlyList<ICharacterSet> allowedCharSet = default)
     {
-        _allowedCharsets = allowedCharSet ?? DefaultAllowedCharSets;
+        _allowedCharsets = (allowedCharSet ?? DefaultAllowedCharSets).ToArray();
 
         _allowedCharsetsSize = (uint) _allowedCharsets.Aggregate(0, (total, next) => total + next.Count);
         if (maxRepeatingCharCount > 0 && tokenLength > _allowedCharsetsSize * maxRepeatingCharCount)

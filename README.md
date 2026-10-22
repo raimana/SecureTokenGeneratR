@@ -1,95 +1,102 @@
-Secure Token Generator
-==================
-![Main Build](https://github.com/raimana/SecureTokenGeneratR/actions/workflows/workflow.yml/badge.svg)
+# SecureTokenGeneratR
 
-Generate random passwords or token; use the default generation rules or set your own.  
-Using [System.Security.Cryptography.RandomNumberGenerator](https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.randomnumbergenerator) to generate cryptographically strong random values.
+![Build status](https://github.com/raimana/SecureTokenGeneratR/actions/workflows/workflow.yml/badge.svg)
 
-* Dependencies: none
-* Compatibility: NET Framework 4.6.1+, Net Standard 1.0+, .NET 5.0+
+SecureTokenGeneratR generates random tokens using .NET's [cryptographically secure random number generator](https://learn.microsoft.com/dotnet/api/system.security.cryptography.randomnumbergenerator). It has no external dependencies.
 
-### Default Characters Sets
-* All numbers
-* All lower case latin
-* All upper case latin
-* Special characters: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+## Install
 
-### Default Rules
-* Length: 16 characters
-* Max repeating characters: 0 (unlimited)
-
-## Generator Algorithm
-1. Populate random positions of the token with at least one random character from each character set.
-2. Populate all unfilled positions in a random order, each using a random character from a randomly selected characters set.
-3. Honour the max repeating characters constraint, replace any repeated character exceeding the constraint threshold, each using a random character from a randomly selected characters set.
-
-## Installing SecureTokenGeneratR
-Install [SecureTokenGeneratR with NuGet](https://www.nuget.org/packages/SecureTokenGeneratR):
-```c#
-Install-Package SecureTokenGeneratR
-```
-Or the .Net Core CLI
-```c#
+```shell
 dotnet add package SecureTokenGeneratR
 ```
 
+## Defaults
+
+By default, generated tokens:
+
+- Are 16 characters long.
+- Include at least one character from each set: lowercase letters, uppercase letters, digits, and ASCII punctuation.
+- Have no limit on repeated characters.
+
 ## Usage
-### With Default Options
-```c#
-var secureTokenGenerator = new SecureTokenGenerator();
-string secureToken = secureTokenGenerator.Generate();
-```
-The token generated using the default options will contain 16 characters, with **at least** one character from each character set (i.e. lower latin, upper latin, number & special character) without limiting the number of occurrence of any character.
 
-**Notes:**
-1. while improbable, a random sequence such as `1111111111111111` is not impossible.
-2. the default options will generate tokens with 104.87 bits of entropy.
+### Default generator
 
-### With User Defined Options
-```c#
-// Define custom options
-var customCharset1 = new CharsetAsSequence("%XW-[]{}"); // Custom characters sets can be provided as string
-var customCharset2 = new CharsetAsUnicodeRange(65, 70); // Or as a unicode range, here ABCDEF
-var allowedCharsets = new List<ICharacterSet> { customCharset1, customCharset2 };
+Use `SecureToken.Default` to generate tokens with the default settings:
 
-const int tokenLength = 8;
-const int maxRepeatingCharCount = 2; // at most two instances of any characters from all character sets 
+```csharp
+using SecureTokenGeneratR;
 
-var secureTokenGenerator = new SecureTokenGenerator(tokenLength, maxRepeatingCharCount, allowedCharsets);
-string secureToken = secureTokenGenerator.Generate();
-```
-The token generated in the example above will contain 8 characters, **at least** one character from each characters set and **at most** two occurrences of any character from all characters sets.
-
-### With User Defined Options - All Chars Except Controls
-Perhaps a bit extreme...
-```c#
-var allExceptControlChars = Enumerable.Range(0, char.MaxValue+1)
-    .Select(i => (char) i)
-    .Where(chr => !char.IsControl(chr));
-
-var charset = new CharsetAsSequence(allExceptControlChars);
-var allowedCharSet = new List<ICharacterSet> { charset };
-
-var secureTokenGenerator = new SecureTokenGenerator(128, 0, allowedCharSet);
-string password = secureTokenGenerator.Generate(); 
-// ꔫ檳蛪⇾᛼⩫뷾⛨㔟瘲⇐綇ꠎ굩胬㽇줉㫊ⅈ螵蕾뚏涙㼗쎕肁랎汅灸澋큺葾碑丆ኤ䘼㣬﹭క䬈就뒊ꄳ辬☴≣욺션煢我㛣⦥Ფ鈺녝㥃㕅鄵䳄0᪰䴖ꁹ巕唍◠梩ꦇ植?茹阁봻࡚㕦ꤑ麛濫?뗿煦㾏崏஌ꛄ祖쑖㏆⫈?ç櫔￭근틷褾剳聶墔諄ﲺ蕩늘単䷐慓愌ዦ烡쬩ᬐ봸ཌᤶ
+string token = SecureToken.Default.Generate();
 ```
 
-### Get Entropy Metrics
-[See Entropy](https://en.wikipedia.org/wiki/Entropy_(information_theory))
-```c#
-var secureTokenGenerator = new SecureTokenGenerator();
+### Fluent configuration
 
-// Based on characters space and length
-double tokenEntropy = secureTokenGenerator.GetTokenEntropy;
-Console.WriteLine(tokenEntropy); // 104.8734216268422
+Start with `SecureToken` to configure a generator and reuse it to create multiple tokens:
 
-//--
+```csharp
+using SecureTokenGeneratR;
 
-string secureToken = secureTokenGenerator.Generate();
+var generator = SecureToken.WithLength(24)
+    .WithMaxRepeatingCharCount(2);
 
-// Number of bits needed to encode each characters, based on repeated characters.
-double characterEntropy = secureTokenGenerator.GetCharacterEntropy(token);
-Console.WriteLine(characterEntropy); // 4 
+string firstToken = generator.Generate();
+string secondToken = generator.Generate();
 ```
-**Note:** Using entropy alone as a strength factor is not a good approach.
+
+Each `With...` method returns a new configured generator. `WithCharset` adds a sequence or inclusive Unicode range to the current sets. `WithCharsets` replaces all current sets; choose an overload based on the configuration you need:
+
+- `WithCharsets(sequence)` replaces the sets with one character sequence.
+- `WithCharsets(start, end)` replaces them with one inclusive Unicode range.
+- `WithCharsets(charsets)` replaces them with the supplied `ICharacterSet` collection, allowing multiple built-in or custom sets.
+
+### Custom character sets
+
+Define character sets directly with the overloaded `WithCharset` method:
+
+```csharp
+using SecureTokenGeneratR;
+
+var generator = SecureToken.WithCharset("%XW-[]{}")
+    .WithCharset('A', 'F')
+    .WithLength(8)
+    .WithMaxRepeatingCharCount(2);
+
+string token = generator.Generate();
+var digitsOnlyGenerator = generator.WithCharsets('0', '9');
+```
+
+The generated token includes at least one character from each configured set and no more than two occurrences of any character. `digitsOnlyGenerator` replaces both configured sets with the digits 0 through 9.
+
+To replace the current sets with several sets, pass a collection:
+
+```csharp
+using SecureTokenGeneratR;
+using SecureTokenGeneratR.CharacterSets;
+
+ICharacterSet[] charsets =
+[
+    new CharsetAsSequence("%XW-[]{}"),
+    new CharsetAsUnicodeRange('A', 'F')
+];
+
+var mixedGenerator = SecureToken.Default.WithCharsets(charsets);
+```
+
+### Entropy
+
+The generator exposes estimates for token entropy and per-character entropy:
+
+```csharp
+var generator = SecureToken.Default;
+string token = generator.Generate();
+
+double tokenEntropy = generator.GetTokenEntropy;
+double characterEntropy = generator.GetCharacterEntropy(token);
+```
+
+Entropy is one measure of strength and should not be used as the only security assessment.
+
+## Compatibility
+
+Targets .NET Framework 4.6.1, .NET Standard 2.0 and 2.1, and .NET 6, 8, and 10.

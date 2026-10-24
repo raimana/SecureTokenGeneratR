@@ -19,10 +19,10 @@ namespace SecureTokenGeneratR.Benchmarks
         [Benchmark]
         public void GenerateSecureTokenUsingCustomOptions()
         {
-            var allowedCharSet = new List<ICharacterSet> { new CharsetAsSequence(@"0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+}{][:';")};
+            var allowedCharSet = new List<ICharacterSet> { new CharacterSet(@"0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+}{][:';")};
             _ = SecureToken.WithLength(54)
                 .WithMaxRepeatingCharCount(1)
-                .WithCharsets(allowedCharSet)
+                .ReplaceCharsets(allowedCharSet)
                 .Generate();
         }
     }

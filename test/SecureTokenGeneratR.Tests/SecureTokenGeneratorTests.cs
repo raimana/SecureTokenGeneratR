@@ -44,17 +44,17 @@ namespace SecureTokenGeneratR.Tests
         [Trait("Category", "Statistics")]
         public void ShouldGenerateTokensHonouringUserProvidedOptions()
         {
-            var lowerLatinCharset = new CharsetAsUnicodeRange(97, 122);
-            var upperLatinCharset = new CharsetAsUnicodeRange(65, 90);
-            var numbersCharset = new CharsetAsUnicodeRange(48, 57);
-            var specialCharset = new CharsetAsSequence(@"!""#$%&'()*+,-./:;<=>?@[\]^_`{|}~");
+            var lowerLatinCharset = new CharacterSet(97, 122);
+            var upperLatinCharset = new CharacterSet(65, 90);
+            var numbersCharset = new CharacterSet(48, 57);
+            var specialCharset = new CharacterSet(@"!""#$%&'()*+,-./:;<=>?@[\]^_`{|}~");
             var allowedCharSet = new List<ICharacterSet> { lowerLatinCharset, upperLatinCharset, numbersCharset, specialCharset };
 
             const int maxRepeatingCharCount = 2;
             const int tokenLength = 24;
             var secureTokenGenerator = SecureToken.WithLength(tokenLength)
                 .WithMaxRepeatingCharCount(maxRepeatingCharCount)
-                .WithCharsets(allowedCharSet);
+                .ReplaceCharsets(allowedCharSet);
 
             for (var i = 0; i < 200000; i++)
             {
@@ -75,8 +75,8 @@ namespace SecureTokenGeneratR.Tests
         [Fact]
         public void ShouldGenerateTokensWithFluentConfiguration()
         {
-            var generator = SecureToken.WithCharset("ab")
-                .WithCharset('X', 'Y')
+            var generator = SecureToken.ReplaceCharsets("ab")
+                .AddCharset('X', 'Y')
                 .WithLength(8)
                 .WithMaxRepeatingCharCount(2);
 
@@ -92,15 +92,37 @@ namespace SecureTokenGeneratR.Tests
         }
 
         [Fact]
+        public void ShouldGenerateTokensWithRandomLengthWithinConfiguredRange()
+        {
+            var generator = SecureToken.WithLength(8, 24)
+                .ReplaceCharsets("0123456789");
+
+            var tokens = Enumerable.Range(0, 100)
+                .Select(_ => generator.Generate())
+                .ToList();
+
+            tokens.All(token => token.Length is >= 8 and <= 24).ShouldBeTrue();
+            tokens.Select(token => token.Length).Distinct().Count().ShouldBeGreaterThan(1);
+        }
+
+        [Fact]
+        public void ShouldRejectInvalidRandomLengthRanges()
+        {
+            Should.Throw<ArgumentOutOfRangeException>(() => SecureToken.WithLength(0, 24));
+            Should.Throw<ArgumentOutOfRangeException>(() => SecureToken.WithLength(24, 8));
+            Should.Throw<ArgumentOutOfRangeException>(() => SecureToken.WithLength(8, (uint) int.MaxValue + 1));
+        }
+
+        [Fact]
         public void ShouldReplaceConfiguredCharsetsWithSequenceOrRange()
         {
-            var sequenceToken = SecureToken.WithCharset("ab")
-                .WithCharset("XY")
-                .WithCharsets("0123456789")
+            var sequenceToken = SecureToken.AddCharset("ab")
+                .AddCharset("XY")
+                .ReplaceCharsets("0123456789")
                 .WithLength(8)
                 .Generate();
-            var rangeToken = SecureToken.WithCharset("ab")
-                .WithCharsets('0', '9')
+            var rangeToken = SecureToken.AddCharset("ab")
+                .ReplaceCharsets('0', '9')
                 .WithLength(8)
                 .Generate();
 
@@ -113,14 +135,14 @@ namespace SecureTokenGeneratR.Tests
         {
             var allowedCharSet = new List<ICharacterSet>
             {
-                new CharsetAsSequence("ab"),
-                new CharsetAsSequence("XY")
+                new CharacterSet("ab"),
+                new CharacterSet("XY")
             };
             var generator = SecureToken.WithLength(8)
-                .WithCharsets(allowedCharSet);
+                .ReplaceCharsets(allowedCharSet);
 
             allowedCharSet.Clear();
-            allowedCharSet.Add(new CharsetAsSequence("z"));
+            allowedCharSet.Add(new CharacterSet("z"));
 
             var token = generator.Generate();
 
@@ -169,7 +191,7 @@ namespace SecureTokenGeneratR.Tests
             constructor.ShouldNotBeNull();
             Attribute.IsDefined(constructor, typeof(ObsoleteAttribute)).ShouldBeTrue();
 
-            var allowedCharSet = new List<ICharacterSet> { new CharsetAsSequence("abc") };
+            var allowedCharSet = new List<ICharacterSet> { new CharacterSet("abc") };
             var generator = (SecureTokenGenerator)constructor.Invoke(new object[] { 8u, 0u, allowedCharSet });
             generator.Generate().Length.ShouldBe(8);
         }
@@ -180,10 +202,10 @@ namespace SecureTokenGeneratR.Tests
         {
             Action secureTokenGeneratorInvocation = () =>
             {
-                var allowedCharSet = new List<ICharacterSet> { new CharsetAsSequence("abc") };
+                var allowedCharSet = new List<ICharacterSet> { new CharacterSet("abc") };
                 _ = SecureToken.WithLength(6)
                     .WithMaxRepeatingCharCount(1)
-                    .WithCharsets(allowedCharSet);
+                    .ReplaceCharsets(allowedCharSet);
             };
 
             Should.Throw<ArgumentException>(secureTokenGeneratorInvocation);
@@ -195,10 +217,10 @@ namespace SecureTokenGeneratR.Tests
         {
             Action secureTokenGeneratorInvocation = () =>
             {
-                var allowedCharSet = new List<ICharacterSet> { new CharsetAsSequence("abc") };
+                var allowedCharSet = new List<ICharacterSet> { new CharacterSet("abc") };
                 _ = SecureToken.WithLength(6)
                     .WithMaxRepeatingCharCount(0)
-                    .WithCharsets(allowedCharSet);
+                    .ReplaceCharsets(allowedCharSet);
             };
 
             Should.NotThrow(secureTokenGeneratorInvocation);
@@ -207,12 +229,12 @@ namespace SecureTokenGeneratR.Tests
         [Fact]
         public void ShouldReturnPerCharacterEntropy()
         {
-            var charset = new CharsetAsSequence("0123456789ABCDEF");
+            var charset = new CharacterSet("0123456789ABCDEF");
             var allowedCharSet = new List<ICharacterSet> { charset };
 
             var secureTokenGenerator = SecureToken.WithLength(16)
                 .WithMaxRepeatingCharCount(1)
-                .WithCharsets(allowedCharSet);
+                .ReplaceCharsets(allowedCharSet);
             var token = secureTokenGenerator.Generate();
             
             var characterEntropy = secureTokenGenerator.GetCharacterEntropy(token);
@@ -222,12 +244,12 @@ namespace SecureTokenGeneratR.Tests
         [Fact]
         public void ShouldReturnTokenEntropy()
         {
-            var charset = new CharsetAsSequence("0123456789ABCDEF");
+            var charset = new CharacterSet("0123456789ABCDEF");
             var allowedCharSet = new List<ICharacterSet> { charset };
 
             var secureTokenGenerator = SecureToken.WithLength(16)
                 .WithMaxRepeatingCharCount(1)
-                .WithCharsets(allowedCharSet);
+                .ReplaceCharsets(allowedCharSet);
 
             var tokenEntropy = secureTokenGenerator.GetTokenEntropy;
             tokenEntropy.ShouldBe(64d);

@@ -32,55 +32,48 @@ string token = SecureToken.Default.Generate();
 
 ### Fluent configuration
 
-Start with `SecureToken` to configure a generator and reuse it to create multiple tokens:
+Each call returns a new generator, so options can be chained:
+
+| Call | Effect |
+| --- | --- |
+| `SecureToken.Default` | Starts with the default length and character sets. |
+| `WithLength(length)` | Sets a fixed token length. |
+| `WithLength(minimum, maximum)` | Randomly chooses an inclusive length between `minimum` and `maximum` for each generated token. |
+| `WithMaxRepeatingCharCount(count)` | Limits how many times any one character may appear; `0` means no limit. |
+| `AddCharset(sequence)` | Adds a character sequence to the current allowed sets. When called on `SecureToken`, starts with the default sets. |
+| `AddCharset(start, end)` | Adds an inclusive Unicode range to the current allowed sets. When called on `SecureToken`, starts with the default sets. |
+| `ReplaceCharsets(sequence)` | Replaces all current allowed sets with one character sequence. |
+| `ReplaceCharsets(start, end)` | Replaces all current allowed sets with one inclusive Unicode range. |
+| `ReplaceCharsets(charsets)` | Replaces all current allowed sets with the supplied `ICharacterSet` collection. |
+| `Generate()` | Generates a token using the configured options. |
+
+`AddCharset` adds; `ReplaceCharsets` replaces. Generated tokens include at least one character from each configured set.
+
+For example, this generator adds two sets and picks a random token length from 8 to 24. The second generator replaces those sets with digits:
 
 ```csharp
 using SecureTokenGeneratR;
 
-var generator = SecureToken.WithLength(24)
-    .WithMaxRepeatingCharCount(2);
-
-string firstToken = generator.Generate();
-string secondToken = generator.Generate();
-```
-
-Each `With...` method returns a new configured generator. `WithCharset` adds a sequence or inclusive Unicode range to the current sets. `WithCharsets` replaces all current sets; choose an overload based on the configuration you need:
-
-- `WithCharsets(sequence)` replaces the sets with one character sequence.
-- `WithCharsets(start, end)` replaces them with one inclusive Unicode range.
-- `WithCharsets(charsets)` replaces them with the supplied `ICharacterSet` collection, allowing multiple built-in or custom sets.
-
-### Custom character sets
-
-Define character sets directly with the overloaded `WithCharset` method:
-
-```csharp
-using SecureTokenGeneratR;
-
-var generator = SecureToken.WithCharset("%XW-[]{}")
-    .WithCharset('A', 'F')
-    .WithLength(8)
+var generator = SecureToken.AddCharset("%XW-[]{}") // character sequence
+    .AddCharset('A', 'F') // inclusive Unicode range: U+0041 to U+0046
+    .WithLength(8, 24)
     .WithMaxRepeatingCharCount(2);
 
 string token = generator.Generate();
-var digitsOnlyGenerator = generator.WithCharsets('0', '9');
+var digitsOnlyGenerator = generator.ReplaceCharsets('0', '9');
 ```
 
-The generated token includes at least one character from each configured set and no more than two occurrences of any character. `digitsOnlyGenerator` replaces both configured sets with the digits 0 through 9.
-
-To replace the current sets with several sets, pass a collection:
+For multiple custom sets, construct each with `CharacterSet` and pass them to `ReplaceCharsets`:
 
 ```csharp
-using SecureTokenGeneratR;
 using SecureTokenGeneratR.CharacterSets;
 
 ICharacterSet[] charsets =
 [
-    new CharsetAsSequence("%XW-[]{}"),
-    new CharsetAsUnicodeRange('A', 'F')
+    new CharacterSet("abc"), // character sequence
+    new CharacterSet('0', '9') // inclusive Unicode range: U+0030 to U+0039
 ];
-
-var mixedGenerator = SecureToken.Default.WithCharsets(charsets);
+var customGenerator = SecureToken.Default.ReplaceCharsets(charsets);
 ```
 
 ### Entropy

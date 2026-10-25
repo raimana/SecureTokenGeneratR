@@ -17,8 +17,8 @@
         <RepositoryUrl>https://github.com/raimana/SecureTokenGeneratR</RepositoryUrl>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageVersion>2.0.0-alpha.2</PackageVersion>
-        <PackageReleaseNotes>* Added support for .NET Framework 4.8.1</PackageReleaseNotes>
+        <PackageVersion>2.0.0</PackageVersion>
+        <PackageReleaseNotes>* Stable release with support for .NET Framework 4.8.1</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>

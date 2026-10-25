@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using FluentAssertions;
+using Shouldly;
 using Xunit;
 using static SecureTokenGeneratR.CryptographicNumberGenerator;
 
@@ -16,13 +16,13 @@ namespace SecureTokenGeneratR.Tests
             for (var i = 0; i < 200000; i++)
             {
                 var position = GetRandomIntFromRange(0, length, indicesToExclude);
-                position.Should().BeInRange(0, length - 1);
-                position.Should().NotBe(1)
-                    .And.NotBe(2)
-                    .And.NotBe(3)
-                    .And.NotBe(5)
-                    .And.NotBe(8)
-                    .And.NotBe(13);
+                position.ShouldBeInRange(0, length - 1);
+                position.ShouldNotBe(1);
+                position.ShouldNotBe(2);
+                position.ShouldNotBe(3);
+                position.ShouldNotBe(5);
+                position.ShouldNotBe(8);
+                position.ShouldNotBe(13);
             }
         }
         
@@ -32,7 +32,7 @@ namespace SecureTokenGeneratR.Tests
             for (var i = 0; i < 200000; i++)
             {
                 var randomUInt = GetRandomUInt();
-                randomUInt.Should().BePositive();
+                (randomUInt > 0u).ShouldBeTrue();
             }
         }
     }

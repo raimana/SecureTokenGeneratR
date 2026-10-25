@@ -14,13 +14,16 @@ namespace SecureTokenGeneratR.Benchmarks
     public class SecureTokenGeneratorBenchmark
     {
         [Benchmark]
-        public void GenerateSecureTokenUsingDefault() => _ = new SecureTokenGenerator().Generate();
+        public void GenerateSecureTokenUsingDefault() => _ = SecureToken.Default.Generate();
 
         [Benchmark]
         public void GenerateSecureTokenUsingCustomOptions()
         {
-            var allowedCharSet = new List<ICharacterSet> { new CharsetAsSequence(@"0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+}{][:';")};
-            _ = new SecureTokenGenerator(54, 1, allowedCharSet).Generate();
+            var allowedCharSet = new List<ICharacterSet> { new CharacterSet(@"0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+}{][:';")};
+            _ = SecureToken.WithLength(54)
+                .WithMaxRepeatingCharCount(1)
+                .ReplaceCharsets(allowedCharSet)
+                .Generate();
         }
     }
 }

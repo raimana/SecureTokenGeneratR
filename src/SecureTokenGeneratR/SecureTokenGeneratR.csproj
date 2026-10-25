@@ -3,7 +3,8 @@
     <PropertyGroup>
         <LangVersion>12</LangVersion>
         <Nullable>disable</Nullable>
-        <TargetFrameworks>net461;netstandard2.0;netstandard2.1;net6.0;net8.0</TargetFrameworks>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <TargetFrameworks>net461;net481;netstandard2.0;netstandard2.1;net6.0;net8.0;net10.0</TargetFrameworks>
         <Title>SecureTokenGeneratR</Title>
         <Authors>Raimana Lowgreen</Authors>
         <Description>.NET Secure Token Generator</Description>
@@ -15,8 +16,18 @@
         <PackageProjectUrl>https://github.com/raimana/SecureTokenGeneratR</PackageProjectUrl>
         <RepositoryUrl>https://github.com/raimana/SecureTokenGeneratR</RepositoryUrl>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-        <PackageVersion>1.0.1</PackageVersion>
-        <PackageReleaseNotes>* Added entropy calculator</PackageReleaseNotes>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageVersion>2.0.0-alpha.2</PackageVersion>
+        <PackageReleaseNotes>* Added support for .NET Framework 4.8.1</PackageReleaseNotes>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+        <InternalsVisibleTo Include="SecureTokenGeneratR.Tests" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net481'">
+        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net481" Version="1.0.3" PrivateAssets="all" />
+    </ItemGroup>
 
 </Project>

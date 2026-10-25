@@ -1,6 +1,6 @@
 ﻿using System;
-using FluentAssertions;
 using SecureTokenGeneratR.CharacterSets;
+using Shouldly;
 using Xunit;
 
 namespace SecureTokenGeneratR.Tests
@@ -14,13 +14,13 @@ namespace SecureTokenGeneratR.Tests
             const int startUnicodeRange = 97; // lower case a
             const int endUnicodeRange = 122; // lower case z
 
-            var characterSet = new CharsetAsUnicodeRange(startUnicodeRange, endUnicodeRange);
+            var characterSet = new CharacterSet(startUnicodeRange, endUnicodeRange);
 
             for (var i = 0; i < 200000; i++)
             {
                 var randomChar = characterSet.GetRandomChar();
 
-                char.IsLower(randomChar).Should().BeTrue();
+                char.IsLower(randomChar).ShouldBeTrue();
             }
         }
 
@@ -29,13 +29,13 @@ namespace SecureTokenGeneratR.Tests
         {
             var charArray = @"!""#$%&'()*+,-./:;<=>?@[\]^_`{|}~".ToCharArray();
 
-            var characterSet = new CharsetAsSequence(charArray);
+            var characterSet = new CharacterSet(charArray);
 
             for (var i = 0; i < 200000; i++)
             {
                 var randomChar = characterSet.GetRandomChar();
 
-                charArray.Should().Contain(randomChar);
+                charArray.ShouldContain(randomChar);
             }
         }
 
@@ -45,9 +45,9 @@ namespace SecureTokenGeneratR.Tests
             const int startUnicodeRange = 97;
             const int endUnicodeRange = 97;
 
-            Action unicodeCharacterSetInvocation = () => new CharsetAsUnicodeRange(startUnicodeRange, endUnicodeRange);
+            Action unicodeCharacterSetInvocation = () => new CharacterSet(startUnicodeRange, endUnicodeRange);
 
-            unicodeCharacterSetInvocation.Should().Throw<ArgumentOutOfRangeException>();
+            Should.Throw<ArgumentOutOfRangeException>(unicodeCharacterSetInvocation);
         }
 
         [Fact]
@@ -56,9 +56,9 @@ namespace SecureTokenGeneratR.Tests
             const int startUnicodeRange = 100;
             const int endUnicodeRange = 97;
 
-            Action unicodeCharacterSetInvocation = () => new CharsetAsUnicodeRange(startUnicodeRange, endUnicodeRange);
+            Action unicodeCharacterSetInvocation = () => new CharacterSet(startUnicodeRange, endUnicodeRange);
 
-            unicodeCharacterSetInvocation.Should().Throw<ArgumentOutOfRangeException>();
+            Should.Throw<ArgumentOutOfRangeException>(unicodeCharacterSetInvocation);
         }
     }
 }

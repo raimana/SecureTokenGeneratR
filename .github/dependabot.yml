@@ -1,0 +1,22 @@
+version: 2
+
+updates:
+  - package-ecosystem: nuget
+    directory: /src/SecureTokenGeneratR
+    schedule:
+      interval: weekly
+
+  - package-ecosystem: nuget
+    directory: /test/SecureTokenGeneratR.Tests
+    schedule:
+      interval: weekly
+
+  - package-ecosystem: nuget
+    directory: /test/SecureTokenGeneratR.Benchmarks
+    schedule:
+      interval: weekly
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

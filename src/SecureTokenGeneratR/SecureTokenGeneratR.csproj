@@ -7,9 +7,9 @@
         <TargetFrameworks>net461;net481;netstandard2.0;netstandard2.1;net6.0;net8.0;net10.0</TargetFrameworks>
         <Title>SecureTokenGeneratR</Title>
         <Authors>Raimana Lowgreen</Authors>
-        <Description>.NET Secure Token Generator</Description>
+        <Description>Generate cryptographically secure random passwords and tokens in .NET with configurable lengths, character sets, and repetition limits.</Description>
         <Copyright>Copyright Raimana Lowgreen</Copyright>
-        <PackageTags>secure; secure token; token; password; generator; password generator</PackageTags>
+        <PackageTags>secure; cryptographic; password generator; random password; secure password; token generator; random token</PackageTags>
         <SignAssembly>false</SignAssembly>
         <DelaySign>false</DelaySign>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

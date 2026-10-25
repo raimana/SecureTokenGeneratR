@@ -17,8 +17,9 @@
         <RepositoryUrl>https://github.com/raimana/SecureTokenGeneratR</RepositoryUrl>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageVersion>2.0.0</PackageVersion>
-        <PackageReleaseNotes>* Stable release with support for .NET Framework 4.8.1</PackageReleaseNotes>
+        <PackageVersion>2.0.1</PackageVersion>
+        <PackageReleaseNotes>* Expanded package metadata for password and token use cases.
+* Fixed a rare overflow during random token generation.</PackageReleaseNotes>
     </PropertyGroup>
 
     <ItemGroup>

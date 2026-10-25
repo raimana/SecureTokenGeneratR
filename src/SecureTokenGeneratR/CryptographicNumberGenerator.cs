@@ -35,7 +35,7 @@ internal static class CryptographicNumberGenerator
         using var rng = RandomNumberGenerator.Create();
         var buffer = new byte[sizeof(int)];
         rng.GetBytes(buffer);
-        var randomNumber = Math.Abs(BitConverter.ToInt32(buffer, 0));
+        var randomNumber = BitConverter.ToInt32(buffer, 0) & int.MaxValue;
         return randomNumber;
     }
 

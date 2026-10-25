@@ -1,6 +1,7 @@
 # SecureTokenGeneratR
 
 ![Build status](https://github.com/raimana/SecureTokenGeneratR/actions/workflows/workflow.yml/badge.svg)
+[![NuGet version](https://img.shields.io/nuget/v/SecureTokenGeneratR)](https://www.nuget.org/packages/SecureTokenGeneratR)
 
 SecureTokenGeneratR generates random tokens using .NET's [cryptographically secure random number generator](https://learn.microsoft.com/dotnet/api/system.security.cryptography.randomnumbergenerator).
 No external dependencies.
@@ -41,7 +42,7 @@ string token = SecureToken.Default.Generate();
 
 ### Fluent configuration
 
-Each call returns a new generator, so options can be chained:
+Generator configuration is immutable: each configuration method returns a new generator.
 
 | Call | Effect |
 | --- | --- |
@@ -54,9 +55,7 @@ Each call returns a new generator, so options can be chained:
 | `ReplaceCharsets(sequence)` | Replaces all current allowed sets with one character sequence. |
 | `ReplaceCharsets(start, end)` | Replaces all current allowed sets with one inclusive Unicode range. |
 | `ReplaceCharsets(charsets)` | Replaces all current allowed sets with the supplied `ICharacterSet` collection. |
-| `Generate()` | Generates a token using the configured options. |
-
-`AddCharset` adds; `ReplaceCharsets` replaces. Generated tokens include at least one character from each configured set.
+| `Generate()` | Generates a token containing at least one character from each configured set. |
 
 For example, this generator adds two sets and picks a random token length from 8 to 24. The second generator replaces those sets with digits:
 
